@@ -10,7 +10,7 @@ PORT_MAPS=-P
 
 # ------------- main ------------
 shell(){
-	docker exec -it ${container} su root
+	docker exec -it ${CONTAINER} su root
 }
 
 push(){
