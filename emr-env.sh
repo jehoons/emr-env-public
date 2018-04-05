@@ -1,5 +1,5 @@
 #!/bin/bash 
-IMAGE=emrenv
+IMAGE=jhsong/emrenv
 CONTAINER=emrenv_$(whoami)
 DOCKER_HOME=/root
 HOST_SCRATCH_DIR=${HOME}/.scratch
@@ -10,7 +10,15 @@ PORT_MAPS=-P
 
 # ------------- main ------------
 shell(){
-	docker exec -it ${CONTAINER} su root
+	docker exec -it ${container} su root
+}
+
+push(){
+	docker push 
+}
+
+pull(){
+	docker pull ${IMAGE}
 }
 
 ps(){
@@ -72,7 +80,6 @@ parser.add_argument('-n', '--nvidia',
 EOF
 
 case "${EXEC_MODE}" in
-
     shell)
         shell 
         ;; 
@@ -99,6 +106,12 @@ case "${EXEC_MODE}" in
         build 
         start $NVIDIA
         ;; 
+    push)
+        push  
+        ;;
+    pull)
+        pull  
+        ;;
     *)
         echo 
 esac
