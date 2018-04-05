@@ -14,7 +14,7 @@ shell(){
 }
 
 push(){
-	docker push 
+	docker push ${IMAGE}
 }
 
 pull(){
