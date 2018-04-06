@@ -2,8 +2,7 @@
 FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
 MAINTAINER Je-Hoon Song "song.jehoon@gmail.com"
 
-RUN apt-get update && apt-get install -y python3-pip python3-dev && cd /usr/local/bin && ln -s /usr/bin/python3 python && pip3 install --upgrade pip
-RUN apt-get install -y sudo vim git 
+RUN apt-get update && apt-get install -y sudo git python3-pip python3-dev && cd /usr/local/bin && ln -s /usr/bin/python3 python && pip3 install --upgrade pip
 
 # deps for openbabel 
 RUN apt-get -y install cmake libcairo2-dev zlib1g-dev libxml2-dev python-dev gcc make g++
@@ -54,22 +53,11 @@ RUN cd ${RDBASE}/External/INCHI-API && ./download-inchi.sh
 RUN mkdir -p ${RDBASE}/build
 RUN cd ${RDBASE}/build && cmake -DRDK_BUILD_INCHI_SUPPORT=ON .. && make -j4 && make install
 
-# install python additional 
-RUN pip install virtualenv 
-RUN pip install ipython pytest pandas numpy scipy
-RUN pip install ipdb
-RUN pip install pympler tqdm xmljson py2neo psycopg2 goatools
-RUN pip install cmapPy
+RUN pip install virtualenv ipython pytest pandas numpy scipy ipdb pympler tqdm xmljson py2neo psycopg2 goatools cmapPy
 RUN apt-get update && apt-get install python-mysql.connector && pip install mysql-connector==2.1.4
-
-# install figshare
-RUN curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
-RUN apt-get update && apt-get install -y nodejs
 
 ENV PATH /opt/bin:${PATH}
 
-# install goatools 
-# COPY packages/goatools-downloaded-201712.tar.gz . 
 RUN wget https://ndownloader.figshare.com/files/10939553 -O goatools-downloaded-201712.tar.gz
 RUN pip install scipy
 RUN gzip -d goatools-downloaded-201712.tar.gz && tar xvf goatools-downloaded-201712.tar
@@ -103,6 +91,8 @@ WORKDIR ${EMR_HOME}
 RUN apt-get update && apt-get install -y build-essential git curl wget bash-completion openssh-server gfortran sudo make  cmake libssl-dev libreadline-dev llvm libsqlite3-dev libmysqlclient-dev python-dev python3-dev zlib1g-dev libbz2-dev language-pack-ko
 
 # COPY packages/vim.tar.gz ${EMR_HOME}/
+# VIM should be installed twice 
+RUN apt-get install -y vim 
 RUN wget https://ndownloader.figshare.com/files/10597954 -O ${EMR_HOME}/vim.tar.gz
 
 RUN cd ${EMR_HOME} && tar xvfz vim.tar.gz 
@@ -121,38 +111,30 @@ RUN cd ${EMR_HOME} && sh ./neobundle.sh && rm -f ./neobundle.sh
 # supertab
 WORKDIR ${EMR_HOME}
 
-# COPY packages/supertab.vmb . 
-RUN wget https://ndownloader.figshare.com/files/10939565 -O ${EMR_HOME}/supertab.vmb
-
-RUN vim -c 'so %' -c 'q' ${EMR_HOME}/supertab.vmb && rm -f ${EMR_HOME}/supertab.vmb
-
 COPY .vimrc ${EMR_HOME}/.vimrc
 COPY .vim ${EMR_HOME}/.vim
 
 RUN vim +NeoBundleInstall +qall
 
+# COPY packages/supertab.vmb . 
+RUN wget https://ndownloader.figshare.com/files/10939565 -O ${EMR_HOME}/supertab.vmb
+RUN vim -c 'so %' -c 'q' ${EMR_HOME}/supertab.vmb && rm -f ${EMR_HOME}/supertab.vmb
+
 # ETC 
 USER root 
 ENV LC_ALL=C
-RUN pip install pip --upgrade && pip install ptpython ptipython
-RUN pip install ptpdb --upgrade 
-RUN pip install pytest-xdist 
-
 RUN apt-get install -y net-tools 
 
 # Jupyter Notebook 
-RUN pip install jupyter jupyterlab
+RUN pip install pytest-xdist jupyter jupyterlab matplotlib-venn sympy sklearn ipywidgets
 RUN mkdir -p -m 700 ${EMR_HOME}/.jupyter/ 
 COPY jupyter_notebook_config.py ${EMR_HOME}/.jupyter/
-RUN pip install jupyterthemes
-RUN pip install --upgrade jupyterthemes
 RUN jupyter serverextension enable --py jupyterlab --sys-prefix
-RUN pip install matplotlib-venn sympy sklearn ipywidgets
+RUN curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+RUN apt-get update && apt-get install -y nodejs
 RUN jupyter nbextension enable --py widgetsnbextension
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
-# Telegram bot 
-# RUN pip install telepot
 RUN apt-get update && apt-get install -y python3-tk
 
 # Copy public keys to connect to the docker without password
@@ -190,19 +172,13 @@ ENV EMR_SCRATCH_DIR="$EMR_HOME/.scratch"
 ENV EMR_DATASETS_BASE="http://192.168.0.89/share/StandigmDB/datasets"
 
 # jupyter widgets ...
-RUN pip install ipyleaflet
+RUN pip install ipyleaflet bqplot 
 RUN jupyter nbextension enable --py --sys-prefix ipyleaflet
-
-RUN pip install bqplot
 RUN jupyter nbextension enable --py --sys-prefix bqplot
-
-# machine learning 
-RUN pip install theano
 
 RUN pip install --upgrade --force-reinstall appnope==0.1.0 backports.functools-lru-cache==1.5 bleach==2.1.3 certifi==2018.1.18 cycler==0.10.0 decorator==4.2.1 entrypoints==0.2.3 graphviz==0.8.2 h5py==2.7.1 html5lib==1.0.1 ipykernel==4.8.2 ipython==6.2.1 ipython-genutils==0.2.0 ipywidgets==7.1.2 jedi==0.11.1 Jinja2==2.10 jsonschema==2.6.0 jupyter==1.0.0 jupyter-client==5.2.3 jupyter-console==5.2.0 jupyter-core==4.4.0 Keras==2.0.6 kiwisolver==1.0.1 MarkupSafe==1.0 matplotlib==2.2.2 mistune==0.8.3 mock==2.0.0 nbconvert==5.3.1 nbformat==4.4.0 notebook==5.4.1 numpy==1.14.2 olefile==0.45.1 pandas==0.22.0 pandocfilters==1.4.2 parso==0.1.1 pbr==3.1.1 pexpect==4.4.0 pickleshare==0.7.4 Pillow==5.0.0 prompt-toolkit==1.0.15 protobuf==3.5.2 ptyprocess==0.5.2 pydot==1.2.3 Pygments==2.2.0 pyparsing==2.2.0 python-dateutil==2.7.0 pytz==2018.3 PyYAML==3.12 pyzmq==17.0.0 qtconsole==4.3.1 scikit-learn==0.19.1 scipy==1.0.0 Send2Trash==1.5.0 simplegeneric==0.8.1 six==1.11.0 tensorflow==1.0.0 terminado==0.8.1 testpath==0.3.1 Theano==1.0.1 tornado==5.0.1 traitlets==4.3.2 wcwidth==0.1.7 webencodings==0.5.1 widgetsnbextension==3.1.4 
 
 RUN pip install git+https://github.com/aspuru-guzik-group/chemical_vae.git
-
 RUN apt-get install -y python3-pydot graphviz
 RUN pip install pydot_ng
 
