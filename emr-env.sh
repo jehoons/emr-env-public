@@ -1,6 +1,6 @@
 #!/bin/bash 
 IMAGE=jhsong/emrenv
-CONTAINER=emrenv_$(whoami)
+CONTAINER=emrenv_$(basename ${HOME})
 DOCKER_HOME=/root
 HOST_SCRATCH_DIR=${HOME}/.scratch
 DOCKER_SCRATCH_DIR=${DOCKER_HOME}/.scratch
