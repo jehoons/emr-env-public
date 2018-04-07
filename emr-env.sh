@@ -1,5 +1,6 @@
 #!/bin/bash 
 IMAGE=jhsong/emrenv
+IMAGE_FILE=emrenv.tar
 CONTAINER=emrenv_$(basename ${HOME})
 DOCKER_HOME=/root
 HOST_SCRATCH_DIR=${HOME}/.scratch
@@ -9,20 +10,32 @@ VOLUMNE_MAPS="-v ${HOST_SCRATCH_DIR}:${DOCKER_SCRATCH_DIR} -v `pwd`/share:${DOCK
 PORT_MAPS=-P 
 
 # ------------- main ------------
-shell(){
-	docker exec -it ${CONTAINER} su root
+shell(){ 
+    docker exec -it ${CONTAINER} su root 
 }
 
-push(){
-	docker push ${IMAGE}
+push(){ 
+    docker push ${IMAGE} 
 }
 
-pull(){
-	docker pull ${IMAGE}
+pull(){ 
+    docker pull ${IMAGE} 
 }
 
-ps(){
-	docker ps | grep --color ${CONTAINER}
+load(){ 
+    docker load < ${IMAGE_FILE} 
+}
+
+save(){ 
+    docker save ${IMAGE} > ${IMAGE_FILE} 
+}
+
+ps(){ 
+    docker ps | grep --color ${CONTAINER} 
+}
+
+build(){ 
+    docker build . -t ${IMAGE} 
 }
 
 jup(){
@@ -38,9 +51,6 @@ jup(){
     echo ${jupaddr} | sed "s/8888/${jupport}/g"
 }
 
-build(){
-    docker build . -t ${IMAGE}
-}
 
 start(){
 	mkdir -p ${HOST_SCRATCH_DIR}
@@ -80,6 +90,12 @@ parser.add_argument('-n', '--nvidia',
 EOF
 
 case "${EXEC_MODE}" in
+    save)
+        save
+        ;; 
+    load)
+        load 
+        ;; 
     shell)
         shell 
         ;; 
