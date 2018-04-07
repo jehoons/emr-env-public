@@ -143,7 +143,7 @@ COPY public_keys ${EMR_HOME}
 RUN cat ${EMR_HOME}/public_keys >> ${EMR_HOME}/.ssh/authorized_keys && chmod 600 ${EMR_HOME}/.ssh/authorized_keys && rm -f ${EMR_HOME}/public_keys
 
 # Copy github config file 
-COPY .gitconfig .
+# COPY .gitconfig .
 
 # file ownership
 RUN chown -R root:root ${EMR_HOME} 
