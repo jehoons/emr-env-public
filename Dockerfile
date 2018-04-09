@@ -51,7 +51,7 @@ RUN wget https://ndownloader.figshare.com/files/10939562 -O ${EMR_PACKAGE_DIR}/$
 RUN tar xzvf $RDKIT_VERSION.tar.gz && rm -f $RDKIT_VERSION.tar.gz
 RUN cd ${RDBASE}/External/INCHI-API && ./download-inchi.sh
 RUN mkdir -p ${RDBASE}/build
-RUN cd ${RDBASE}/build && cmake -DRDK_BUILD_INCHI_SUPPORT=ON .. && make -j4 && make install
+RUN cd ${RDBASE}/build && cmake -DRDK_BUILD_INCHI_SUPPORT=ON .. && make -j2 && make install
 
 RUN pip install virtualenv ipython pytest pandas numpy scipy ipdb pympler tqdm xmljson py2neo psycopg2 goatools cmapPy
 RUN apt-get update && apt-get install python-mysql.connector && pip install mysql-connector==2.1.4
