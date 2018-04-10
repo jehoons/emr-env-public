@@ -1,5 +1,5 @@
 #!/bin/bash 
-IMAGE=jhsong/emrenv
+IMAGE=jhsong/emrenv:latest
 IMAGE_FILE=emrenv.tar
 CONTAINER=emrenv_$(basename ${HOME})
 DOCKER_HOME=/root
