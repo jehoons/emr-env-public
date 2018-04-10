@@ -73,12 +73,12 @@ RUN chown -R root:root ${EMR_PACKAGE_DIR}
 RUN rm -rf ${SCRATCH_DIR}
 
 # sshd 
-RUN apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-ENV NOTVISIBLE "in users profile"
-RUN echo "export VISIBLE=now" >> /etc/profile
+#RUN apt-get install -y openssh-server
+#RUN mkdir /var/run/sshd
+#RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+#RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+#ENV NOTVISIBLE "in users profile"
+#RUN echo "export VISIBLE=now" >> /etc/profile
 
 # file ownership
 RUN chown -R root:root ${EMR_HOME} 
@@ -101,7 +101,7 @@ RUN cd ${EMR_HOME}/vim && ./configure --with-features=huge --enable-multibyte --
 RUN cd ${EMR_HOME}/vim && make VIMRUNTIMEDIR=/usr/share/vim/vim74 && make -j4 install
 
 WORKDIR ${EMR_HOME}
-RUN cd ${EMR_HOME} && rm -rf vim
+RUN cd ${EMR_HOME} && rm -rf vim.tar.gz
 
 # COPY packages/neobundle.sh ${EMR_HOME}
 RUN wget https://ndownloader.figshare.com/files/10939550 -O ${EMR_HOME}/neobundle.sh

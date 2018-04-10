@@ -47,8 +47,11 @@ jup(){
     fi 
     jupaddr=$(cat share/logs/jupyterlab.log | grep -o http://0.0.0.0:8888/.*$ | head -1 | sed "s/0.0.0.0/${hostipaddr}/g")
     jupport=$(docker ps | grep --color ${CONTAINER} | grep -o --color "[0-9]\+->8888\+" | sed "s/->8888//g")
-    echo "Jupyter connection address is :"
-    echo ${jupaddr} | sed "s/8888/${jupport}/g"
+    conn_jupyter=$(echo ${jupaddr} | sed "s/8888/${jupport}/g")
+    conn_jupyterlab=$(echo ${conn_jupyter} | sed "s/?/lab?/g")
+    echo "Your Jupyter addressis is ${conn_jupyter}"
+    echo "Your JupyterLab address is ${conn_jupyterlab}"
+    echo "enjoy!"
 }
 
 start(){
