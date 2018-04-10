@@ -1,5 +1,5 @@
 # FROM       ubuntu:16.04
-FROM nvidia/cuda:8.0-cudnn7-devel-ubuntu16.04
+FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 MAINTAINER Je-Hoon Song "song.jehoon@gmail.com"
 
 RUN apt-get update && apt-get install -y sudo git python3-pip python3-dev && cd /usr/local/bin && ln -s /usr/bin/python3 python && pip3 install --upgrade pip
@@ -119,6 +119,7 @@ RUN vim +NeoBundleInstall +qall
 # COPY packages/supertab.vmb . 
 RUN wget https://ndownloader.figshare.com/files/10939565 -O ${EMR_HOME}/supertab.vmb
 RUN vim -c 'so %' -c 'q' ${EMR_HOME}/supertab.vmb && rm -f ${EMR_HOME}/supertab.vmb
+RUN rm -rf ${EMR_HOME}/vim 
 
 # ETC 
 USER root 
@@ -176,15 +177,53 @@ RUN pip install ipyleaflet bqplot
 RUN jupyter nbextension enable --py --sys-prefix ipyleaflet
 RUN jupyter nbextension enable --py --sys-prefix bqplot
 
-RUN pip install --upgrade --force-reinstall appnope==0.1.0 backports.functools-lru-cache==1.5 bleach==2.1.3 certifi==2018.1.18 cycler==0.10.0 decorator==4.2.1 entrypoints==0.2.3 graphviz==0.8.2 h5py==2.7.1 html5lib==1.0.1 ipykernel==4.8.2 ipython==6.2.1 ipython-genutils==0.2.0 ipywidgets==7.1.2 jedi==0.11.1 Jinja2==2.10 jsonschema==2.6.0 jupyter==1.0.0 jupyter-client==5.2.3 jupyter-console==5.2.0 jupyter-core==4.4.0 Keras==2.0.6 kiwisolver==1.0.1 MarkupSafe==1.0 matplotlib==2.2.2 mistune==0.8.3 mock==2.0.0 nbconvert==5.3.1 nbformat==4.4.0 notebook==5.4.1 numpy==1.14.2 olefile==0.45.1 pandas==0.22.0 pandocfilters==1.4.2 parso==0.1.1 pbr==3.1.1 pexpect==4.4.0 pickleshare==0.7.4 Pillow==5.0.0 prompt-toolkit==1.0.15 protobuf==3.5.2 ptyprocess==0.5.2 pydot==1.2.3 Pygments==2.2.0 pyparsing==2.2.0 python-dateutil==2.7.0 pytz==2018.3 PyYAML==3.12 pyzmq==17.0.0 qtconsole==4.3.1 scikit-learn==0.19.1 scipy==1.0.0 Send2Trash==1.5.0 simplegeneric==0.8.1 six==1.11.0 tensorflow==1.0.0 terminado==0.8.1 testpath==0.3.1 Theano==1.0.1 tornado==5.0.1 traitlets==4.3.2 wcwidth==0.1.7 webencodings==0.5.1 widgetsnbextension==3.1.4 
+RUN pip install --upgrade --force-reinstall appnope==0.1.0 backports.functools-lru-cache==1.5 bleach==2.1.3 certifi==2018.1.18 cycler==0.10.0 decorator==4.2.1 entrypoints==0.2.3 graphviz==0.8.2 h5py==2.7.1 html5lib==1.0.1 ipykernel==4.8.2 ipython==6.2.1 ipython-genutils==0.2.0 ipywidgets==7.1.2 jedi==0.11.1 Jinja2==2.10 jsonschema==2.6.0 jupyter==1.0.0 jupyter-client==5.2.3 jupyter-console==5.2.0 jupyter-core==4.4.0 Keras==2.0.6 kiwisolver==1.0.1 MarkupSafe==1.0 matplotlib==2.2.2 mistune==0.8.3 mock==2.0.0 nbconvert==5.3.1 nbformat==4.4.0 notebook==5.4.1 numpy==1.14.2 olefile==0.45.1 pandas==0.22.0 pandocfilters==1.4.2 parso==0.1.1 pbr==3.1.1 pexpect==4.4.0 pickleshare==0.7.4 Pillow==5.0.0 prompt-toolkit==1.0.15 protobuf==3.5.2 ptyprocess==0.5.2 pydot==1.2.3 Pygments==2.2.0 pyparsing==2.2.0 python-dateutil==2.7.0 pytz==2018.3 PyYAML==3.12 pyzmq==17.0.0 qtconsole==4.3.1 scikit-learn==0.19.1 scipy==1.0.0 Send2Trash==1.5.0 simplegeneric==0.8.1 six==1.11.0 tensorflow==1.0.0 terminado==0.8.1 testpath==0.3.1 tornado==5.0.1 traitlets==4.3.2 wcwidth==0.1.7 webencodings==0.5.1 widgetsnbextension==3.1.4 
+# Theano=1.0.1
 
 RUN pip install git+https://github.com/aspuru-guzik-group/chemical_vae.git
 RUN apt-get install -y python3-pydot graphviz
 RUN pip install pydot_ng
 
-RUN python -c "import openbabel; import pybel; import rdkit"
+#RUN git clone https://github.com/Theano/libgpuarray.git
+#RUN cd libgpuarray && mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && make && make install 
+# you can pass -DCMAKE_INSTALL_PREFIX=/path/to/somewhere to install to an alternate location
 
+##############
+# for Theano 
+# Install git, wget, python-dev, pip, BLAS + LAPACK and other dependencies
+RUN apt-get update && apt-get install -y liblapack-dev libopenblas-dev python-nose python-numpy python-scipy
+# Set CUDA_ROOT
+ENV CUDA_ROOT /usr/local/cuda/bin
+# Install CMake 3
+#RUN cd /root && wget http://www.cmake.org/files/v3.8/cmake-3.8.1.tar.gz && \
+#  tar -xf cmake-3.8.1.tar.gz && cd cmake-3.8.1 && \
+#  ./configure && \
+#  make -j2 && \
+#  make install
+
+# Install Cython
+RUN pip install Cython
+
+# Clone libgpuarray repo and move into it
+RUN cd /root && git clone https://github.com/Theano/libgpuarray.git && cd libgpuarray && \
+  mkdir Build && cd Build && \
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr && \
+  make -j3 && make install
+
+# Install pygpu
+RUN cd /root/libgpuarray && python setup.py build_ext -L /usr/lib -I /usr/include && \
+  python setup.py install
+
+# Install bleeding-edge Theano
+RUN pip install --upgrade pip
+RUN pip install --upgrade six
+RUN pip install --upgrade --no-deps git+git://github.com/Theano/Theano.git
+
+# Set up .theanorc for CUDA
 ENV PYTHONPATH ${PYTHONPATH}:/root/share
+COPY .theanorc ${EMR_HOME}/.theanorc
+
+RUN python -c "import openbabel; import pybel; import rdkit"
 
 EXPOSE 8888 22
 

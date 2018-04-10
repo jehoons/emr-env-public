@@ -7,8 +7,9 @@ if [ "${cmd}" == "emr" ]; then
     # jupyter lab --port=8888 --no-browser --ip=0.0.0.0 --allow-root \
     jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --allow-root \
         --notebook-dir=`pwd` >& share/logs/jupyterlab.log &
-
     tail -f share/logs/jupyterlab.log
+#elif [ "${cmd}" == "test"]; then 
+#    python -c "import theano"
 else
     exec "$@"
 fi

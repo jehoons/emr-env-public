@@ -14,6 +14,14 @@ shell(){
     docker exec -it ${CONTAINER} su root 
 }
 
+check(){ 
+    echo "test theano ..."
+    docker exec -it ${CONTAINER} python -c "import theano"
+    echo "test tensorflow ..."
+    docker exec -it ${CONTAINER} python -c "import tensorflow"
+    echo "ok"
+}
+
 push(){ 
     docker push ${IMAGE} 
 }
@@ -38,7 +46,7 @@ build(){
     docker build . -t ${IMAGE} 
 }
 
-jup(){
+jupyter_address(){
     if [ -e "host.txt" ]
     then # for server setting 
         hostipaddr=$(cat host.txt)
@@ -105,7 +113,7 @@ case "${EXEC_MODE}" in
         ps
         ;; 
     jup) 
-        jup 
+        jupyter_address 
         ;; 
 
     build)
@@ -123,9 +131,14 @@ case "${EXEC_MODE}" in
         wait 
         build 
         start $NVIDIA
+        sleep 5
+	jupyter_address
         ;; 
     push)
         push  
+        ;;
+    check)
+        check  
         ;;
     pull)
         pull  
