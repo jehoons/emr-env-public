@@ -51,7 +51,6 @@ jup(){
     echo ${jupaddr} | sed "s/8888/${jupport}/g"
 }
 
-
 start(){
 	mkdir -p ${HOST_SCRATCH_DIR}
 
