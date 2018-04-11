@@ -1,10 +1,36 @@
 #!/bin/bash 
 if [ -e "base.txt" ] 
 then 
-    BASE_IMAGE=$(cat base.txt) 
+    BASE_IMAGE=$(cat base.txt | awk -v line=1 'NR==line')
+    CUDA_ROOT=$(cat base.txt | awk -v line=2 'NR==line')
 else
     BASE_IMAGE="9.0-cudnn7-devel-ubuntu16.04"
+    CUDA_ROOT="/usr/local/cuda-9.0"
 fi
+
+THEANORC="[global]\n
+device=cuda0\n
+floatX=float32\n
+optimizer_including=cudnn\n
+\n
+[lib]\n
+cnmem = 1\n
+\n
+[nvcc]\n
+flags=-D_FORCE_INLINES\n
+fastmath = True\n
+\n
+[blas]\n
+ldflags = -lopenblas\n
+\n
+[cuda]\n
+root = ${CUDA_ROOT}\n
+\n
+[dnn]\n
+library_path = ${CUDA_ROOT}/lib64\n
+include_path = ${CUDA_ROOT}/include"
+
+echo -e $THEANORC > .theanorc
 
 IMAGE=jhsong/emrenv:${BASE_IMAGE} 
 IMAGE_FILE=emrenv.tar
