@@ -10,13 +10,12 @@ else
 fi
 
 IMAGE=jhsong/emrenv:${BASE_IMAGE} 
-IMAGE_FILE=emrenv.tar
-CONTAINER=emrenv_$(basename ${HOME})
+IMAGE_FILE=emrenv-${BASE_IMAGE}.tar
+CONTAINER=emrenv-${BASE_IMAGE}-$(basename ${HOME})
 DOCKER_HOME=/root
 HOST_SCRATCH_DIR=${HOME}/.scratch
 DOCKER_SCRATCH_DIR=${DOCKER_HOME}/.scratch
 VOLUMNE_MAPS="-v ${HOST_SCRATCH_DIR}:${DOCKER_SCRATCH_DIR} -v `pwd`/share:${DOCKER_HOME}/share -v ${HOME}:${DOCKER_HOME}/home"
-# PORT_MAPS=--publish=8888:8888
 PORT_MAPS=-P 
 
 THEANORC="[global]\n
