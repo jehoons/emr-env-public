@@ -1,5 +1,12 @@
 #!/bin/bash 
-IMAGE=jhsong/emrenv:latest
+if [ -e "base.txt" ] 
+then 
+    BASE_IMAGE=$(cat base.txt) 
+else
+    BASE_IMAGE="9.0-cudnn7-devel-ubuntu16.04"
+fi
+
+IMAGE=jhsong/emrenv:${BASE_IMAGE} 
 IMAGE_FILE=emrenv.tar
 CONTAINER=emrenv_$(basename ${HOME})
 DOCKER_HOME=/root
@@ -43,7 +50,10 @@ ps(){
 }
 
 build(){ 
-    docker build . -t ${IMAGE} 
+    echo "*****************************************"
+    echo "base image: ${BASE_IMAGE}"
+    echo "*****************************************"
+    docker build . -t ${IMAGE} --build-arg BASE_IMAGE=${BASE_IMAGE} 
 }
 
 jupyter_address(){
