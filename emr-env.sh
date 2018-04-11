@@ -4,9 +4,20 @@ then
     BASE_IMAGE=$(cat base.txt | awk -v line=1 'NR==line')
     CUDA_ROOT=$(cat base.txt | awk -v line=2 'NR==line')
 else
+    # default is cuda-9.0
     BASE_IMAGE="9.0-cudnn7-devel-ubuntu16.04"
     CUDA_ROOT="/usr/local/cuda-9.0"
 fi
+
+IMAGE=jhsong/emrenv:${BASE_IMAGE} 
+IMAGE_FILE=emrenv.tar
+CONTAINER=emrenv_$(basename ${HOME})
+DOCKER_HOME=/root
+HOST_SCRATCH_DIR=${HOME}/.scratch
+DOCKER_SCRATCH_DIR=${DOCKER_HOME}/.scratch
+VOLUMNE_MAPS="-v ${HOST_SCRATCH_DIR}:${DOCKER_SCRATCH_DIR} -v `pwd`/share:${DOCKER_HOME}/share -v ${HOME}:${DOCKER_HOME}/home"
+# PORT_MAPS=--publish=8888:8888
+PORT_MAPS=-P 
 
 THEANORC="[global]\n
 device=cuda0\n
@@ -32,16 +43,6 @@ include_path = ${CUDA_ROOT}/include"
 
 echo -e $THEANORC > .theanorc
 
-IMAGE=jhsong/emrenv:${BASE_IMAGE} 
-IMAGE_FILE=emrenv.tar
-CONTAINER=emrenv_$(basename ${HOME})
-DOCKER_HOME=/root
-HOST_SCRATCH_DIR=${HOME}/.scratch
-DOCKER_SCRATCH_DIR=${DOCKER_HOME}/.scratch
-VOLUMNE_MAPS="-v ${HOST_SCRATCH_DIR}:${DOCKER_SCRATCH_DIR} -v `pwd`/share:${DOCKER_HOME}/share -v ${HOME}:${DOCKER_HOME}/home"
-# PORT_MAPS=--publish=8888:8888
-PORT_MAPS=-P 
-
 # ------------- main ------------
 shell(){ 
     docker exec -it ${CONTAINER} su root 
@@ -63,11 +64,8 @@ pull(){
     docker pull ${IMAGE} 
 }
 
-load(){ 
-    docker load < ${IMAGE_FILE} 
-}
-
 save(){ 
+    echo "save image to file ${IMAGE_FILE} ..."
     docker save ${IMAGE} > ${IMAGE_FILE} 
 }
 

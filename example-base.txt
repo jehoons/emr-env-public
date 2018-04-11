@@ -1,0 +1,2 @@
+8.0-cudnn7-devel-ubuntu16.04
+/usr/local/cuda-8.0
