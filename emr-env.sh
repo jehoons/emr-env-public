@@ -96,7 +96,7 @@ jupyter_address(){
 }
 
 start(){
-	mkdir -p ${HOST_SCRATCH_DIR}
+    mkdir -p ${HOST_SCRATCH_DIR}
 
     if [ "$1" = "yes" ]
     then 
@@ -104,6 +104,13 @@ start(){
         docker run --runtime=nvidia --rm -d --name ${CONTAINER} ${PORT_MAPS} ${VOLUMNE_MAPS} ${IMAGE} 
     else 
         docker run --rm -d --name ${CONTAINER} ${PORT_MAPS} ${VOLUMNE_MAPS} ${IMAGE} 
+    fi 
+    if [ $? -eq 0 ]
+    then 
+        sleep 5
+        jupyter_address
+    else 
+        echo "docker run failed"
     fi 
 }
 
@@ -155,13 +162,16 @@ case "${EXEC_MODE}" in
         stop
         ;;
     update)
-        echo "wait stoping ..."
-        stop 
-        wait 
         build 
-        start $NVIDIA
-        sleep 5
-	jupyter_address
+        if [ $? -eq 0 ] 
+        then 
+            echo "wait stoping ..."
+            stop 
+            wait 
+            start $NVIDIA
+        else 
+            echo "build failed"
+        fi 
         ;; 
     push)
         push  
