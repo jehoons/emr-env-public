@@ -40,7 +40,7 @@ RUN tar xvfz 3.3.3.tar.gz
 
 # openbabel configuration for compile 
 RUN cd ${OB_BUILD} && cmake ${SCRATCH_DIR}/openbabel-2.4.1 -DCMAKE_INSTALL_PREFIX=${OB_INSTALL} -DEIGEN3_INCLUDE_DIR=${SCRATCH_DIR}/eigen-eigen-67e894c6cd8f -DPYTHON_BINDINGS=ON -DBUILD_GUI=OFF
-RUN cd ${OB_BUILD} && make -j4 && make install
+RUN cd ${OB_BUILD} && make -j30 && make install
 
 # RDKIT
 # Set RDKit version
@@ -55,7 +55,7 @@ RUN wget https://ndownloader.figshare.com/files/10939562 -O ${EMR_PACKAGE_DIR}/$
 RUN tar xzvf $RDKIT_VERSION.tar.gz && rm -f $RDKIT_VERSION.tar.gz
 RUN cd ${RDBASE}/External/INCHI-API && ./download-inchi.sh
 RUN mkdir -p ${RDBASE}/build
-RUN cd ${RDBASE}/build && cmake -DRDK_BUILD_INCHI_SUPPORT=ON .. && make -j2 && make install
+RUN cd ${RDBASE}/build && cmake -DRDK_BUILD_INCHI_SUPPORT=ON .. && make -j30 && make install
 
 RUN pip install virtualenv ipython pytest pandas numpy scipy ipdb pympler tqdm xmljson py2neo psycopg2 goatools cmapPy
 RUN apt-get update && apt-get install python-mysql.connector && pip install mysql-connector==2.1.4
@@ -92,7 +92,7 @@ RUN wget https://ndownloader.figshare.com/files/10597954 -O ${EMR_HOME}/vim.tar.
 RUN cd ${EMR_HOME} && tar xvfz vim.tar.gz 
 
 RUN cd ${EMR_HOME}/vim && ./configure --with-features=huge --enable-multibyte --enable-rubyinterp --enable-pythoninterp=dynamic --with-python-config-dir=/usr/lib/python2.7/config-x86_64-linux-gnu --enable-python3interp=dynamic --with-python3-config-dir=/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu --disable-gui --enable-cscope --prefix=/usr
-RUN cd ${EMR_HOME}/vim && make VIMRUNTIMEDIR=/usr/share/vim/vim74 && make -j4 install
+RUN cd ${EMR_HOME}/vim && make VIMRUNTIMEDIR=/usr/share/vim/vim74 && make -j30 install
 
 WORKDIR ${EMR_HOME}
 RUN cd ${EMR_HOME} && rm -rf vim.tar.gz
@@ -182,7 +182,7 @@ RUN pip install Cython
 RUN cd /root && git clone https://github.com/Theano/libgpuarray.git && cd libgpuarray && \
   mkdir Build && cd Build && \
   cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr && \
-  make -j3 && make install 
+  make -j30 && make install 
 # Install pygpu
 RUN cd /root/libgpuarray && python setup.py build_ext -L /usr/lib -I /usr/include && \
   python setup.py install

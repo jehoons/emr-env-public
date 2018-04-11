@@ -97,7 +97,7 @@ jupyter_address(){
 
 start(){
     mkdir -p ${HOST_SCRATCH_DIR}
-
+    echo "start ${IMAGE}"
     if [ "$1" = "yes" ]
     then 
         echo "run with nvidia/cuda ..."

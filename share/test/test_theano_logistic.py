@@ -8,12 +8,12 @@ def test_theano():
     import theano.tensor as T
     rng = numpy.random
 
-    N = 4000                                   # training sample size
+    N = 400                                   # training sample size
     feats = 64                               # number of input variables
 
     # generate a dataset: D = (input_values, target_class)
     D = (rng.randn(N, feats), rng.randint(size=N, low=0, high=2))
-    training_steps = 100
+    training_steps = 10
 
     # Declare Theano symbolic variables
     x = T.dmatrix("x")
