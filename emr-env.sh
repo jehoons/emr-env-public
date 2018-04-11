@@ -82,7 +82,7 @@ source $(dirname $0)/argparse.bash || exit 1
 argparse "$@" <<EOF || exit 1
 parser.description = 'This is a Docker environment for EMR project.'
 parser.add_argument('exec_mode', type=str, 
-    help='build|start|stop|shell|update'
+    help='shell|check|push|pull|pload|save|build|jup|start|update'
     )
 
 parser.add_argument('-f', '--foreground', 
@@ -109,13 +109,9 @@ case "${EXEC_MODE}" in
     shell)
         shell 
         ;; 
-    ps) 
-        ps
-        ;; 
     jup) 
         jupyter_address 
         ;; 
-
     build)
         build 
         ;;

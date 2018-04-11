@@ -72,14 +72,6 @@ RUN chown -R root:root ${EMR_HOME}
 RUN chown -R root:root ${EMR_PACKAGE_DIR} 
 RUN rm -rf ${SCRATCH_DIR}
 
-# sshd 
-#RUN apt-get install -y openssh-server
-#RUN mkdir /var/run/sshd
-#RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-#RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-#ENV NOTVISIBLE "in users profile"
-#RUN echo "export VISIBLE=now" >> /etc/profile
-
 # file ownership
 RUN chown -R root:root ${EMR_HOME} 
 RUN /usr/bin/ssh-keygen -A
@@ -90,8 +82,6 @@ WORKDIR ${EMR_HOME}
 # Python Env 
 RUN apt-get update && apt-get install -y build-essential git curl wget bash-completion openssh-server gfortran sudo make  cmake libssl-dev libreadline-dev llvm libsqlite3-dev libmysqlclient-dev python-dev python3-dev zlib1g-dev libbz2-dev language-pack-ko
 
-# COPY packages/vim.tar.gz ${EMR_HOME}/
-# VIM should be installed twice 
 RUN apt-get install -y vim 
 RUN wget https://ndownloader.figshare.com/files/10597954 -O ${EMR_HOME}/vim.tar.gz
 
@@ -138,14 +128,6 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
 RUN apt-get update && apt-get install -y python3-tk
 
-# Copy public keys to connect to the docker without password
-RUN ssh-keygen -t rsa -f ${EMR_HOME}/.ssh/id_rsa -q -P ""
-COPY public_keys ${EMR_HOME}
-RUN cat ${EMR_HOME}/public_keys >> ${EMR_HOME}/.ssh/authorized_keys && chmod 600 ${EMR_HOME}/.ssh/authorized_keys && rm -f ${EMR_HOME}/public_keys
-
-# Copy github config file 
-# COPY .gitconfig .
-
 # file ownership
 RUN chown -R root:root ${EMR_HOME} 
 
@@ -184,55 +166,41 @@ RUN pip install git+https://github.com/aspuru-guzik-group/chemical_vae.git
 RUN apt-get install -y python3-pydot graphviz
 RUN pip install pydot_ng
 
-#RUN git clone https://github.com/Theano/libgpuarray.git
-#RUN cd libgpuarray && mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && make && make install 
-# you can pass -DCMAKE_INSTALL_PREFIX=/path/to/somewhere to install to an alternate location
-
 ##############
 # for Theano 
 # Install git, wget, python-dev, pip, BLAS + LAPACK and other dependencies
 RUN apt-get update && apt-get install -y liblapack-dev libopenblas-dev python-nose python-numpy python-scipy
 # Set CUDA_ROOT
 ENV CUDA_ROOT /usr/local/cuda/bin
-# Install CMake 3
-#RUN cd /root && wget http://www.cmake.org/files/v3.8/cmake-3.8.1.tar.gz && \
-#  tar -xf cmake-3.8.1.tar.gz && cd cmake-3.8.1 && \
-#  ./configure && \
-#  make -j2 && \
-#  make install
-
 # Install Cython
 RUN pip install Cython
-
 # Clone libgpuarray repo and move into it
 RUN cd /root && git clone https://github.com/Theano/libgpuarray.git && cd libgpuarray && \
   mkdir Build && cd Build && \
   cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr && \
-  make -j3 && make install
-
+  make -j3 && make install 
 # Install pygpu
 RUN cd /root/libgpuarray && python setup.py build_ext -L /usr/lib -I /usr/include && \
   python setup.py install
-
+# cleaning libgpuarray
+RUN rm -rf /root/libgpuarray
 # Install bleeding-edge Theano
 RUN pip install --upgrade pip
 RUN pip install --upgrade six
 RUN pip install --upgrade --no-deps git+git://github.com/Theano/Theano.git
-
 # Set up .theanorc for CUDA
 ENV PYTHONPATH ${PYTHONPATH}:/root/share
 COPY .theanorc ${EMR_HOME}/.theanorc
-
+# test openbabel, rdkit 
 RUN python -c "import openbabel; import pybel; import rdkit"
-
-EXPOSE 8888 22
+# entrypoint defines starting point 
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 VOLUME ${EMR_HOME}
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+EXPOSE 8888 22
 
 ENTRYPOINT ["/docker-entrypoint.sh"] 
 
 CMD ["emr"]
-
 
