@@ -8,10 +8,10 @@ else
     BASE_IMAGE="9.0-cudnn7-devel-ubuntu16.04"
     CUDA_ROOT="/usr/local/cuda-9.0"
 fi
-
+WHOAMI=$(basename ${HOME})
 IMAGE=jhsong/emrenv:${BASE_IMAGE} 
 IMAGE_FILE=emrenv-${BASE_IMAGE}.tar
-CONTAINER=emrenv-${BASE_IMAGE}-$(basename ${HOME})
+CONTAINER=emrenv-${BASE_IMAGE}-${WHOAMI} 
 DOCKER_HOME=/root
 HOST_SCRATCH_DIR=${HOME}/.scratch
 DOCKER_SCRATCH_DIR=${DOCKER_HOME}/.scratch
@@ -40,19 +40,11 @@ root = ${CUDA_ROOT}\n
 library_path = ${CUDA_ROOT}/lib64\n
 include_path = ${CUDA_ROOT}/include"
 
-echo -e $THEANORC > .theanorc
+echo -e $THEANORC > .theanorc && chown -R ${WHOAMI}:${WHOAMI} .theanorc
 
 # ------------- main ------------
 shell(){ 
     docker exec -it ${CONTAINER} su root 
-}
-
-check(){ 
-    echo "test theano ..."
-    docker exec -it ${CONTAINER} python -c "import theano"
-    echo "test tensorflow ..."
-    docker exec -it ${CONTAINER} python -c "import tensorflow"
-    echo "ok"
 }
 
 push(){ 
@@ -122,7 +114,7 @@ source $(dirname $0)/argparse.bash || exit 1
 argparse "$@" <<EOF || exit 1
 parser.description = 'This is a Docker environment for EMR project.'
 parser.add_argument('exec_mode', type=str, 
-    help='shell|check|push|pull|pload|save|build|jup|start|update'
+    help='shell|push|pull|pload|save|build|jup|start|update'
     )
 
 parser.add_argument('-f', '--foreground', 
@@ -175,9 +167,6 @@ case "${EXEC_MODE}" in
         ;; 
     push)
         push  
-        ;;
-    check)
-        check  
         ;;
     pull)
         pull  
