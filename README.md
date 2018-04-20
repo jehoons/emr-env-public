@@ -1,4 +1,4 @@
-# emr-env 
+# emr-env-public
 
 Hello Dev. Env. for EMR project!
 
