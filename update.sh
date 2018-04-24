@@ -1,1 +1,1 @@
-git pull && git commit -a -m 'Update content' && git push 
+git commit -a -m 'Update content' && git push 
