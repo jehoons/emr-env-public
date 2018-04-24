@@ -55,8 +55,8 @@ jupyter_address(){
     jupport=$(docker ps | grep --color ${CONTAINER} | grep -o --color "[0-9]\+->8888\+" | sed "s/->8888//g")
     conn_jupyter=$(echo ${jupaddr} | sed "s/8888/${jupport}/g")
     conn_jupyterlab=$(echo ${conn_jupyter} | sed "s/?/lab?/g")
-    echo "Your Jupyter addressis is ${conn_jupyter}"
     echo "Your JupyterLab address is ${conn_jupyterlab}"
+    echo ${conn_jupyterlab} > jupyter_connection.info
     echo "enjoy!"
 }
 
