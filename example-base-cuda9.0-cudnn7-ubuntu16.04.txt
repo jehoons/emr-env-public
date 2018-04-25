@@ -1,0 +1,83 @@
+9.0-cudnn7-devel-ubuntu16.04
+/usr/local/cuda-9.0
+---
+Except line1 and line2, all text in this file is ignored, and thereby 
+it can be considered as comments.
+
+Available dockers are listed in the docker site. 
+> https://hub.docker.com/r/nvidia/cuda/
+
+- Ubuntu 17.04 
+
+CUDA 9.1
+9.1-base-ubuntu17.04
+9.1-runtime-ubuntu17.04
+9.1-devel-ubuntu17.04
+
+CUDA 9.0
+9.0-base-ubuntu17.04
+9.0-runtime-ubuntu17.04
+9.0-devel-ubuntu17.04
+
+- Ubuntu 16.04 
+
+CUDA 9.1
+9.1-base-ubuntu16.04
+9.1-runtime-ubuntu16.04
+9.1-devel-ubuntu16.04
+9.1-cudnn7-runtime-ubuntu16.04
+9.1-cudnn7-devel-ubuntu16.04
+
+CUDA 9.0
+9.0-base-ubuntu16.04
+9.0-runtime-ubuntu16.04
+9.0-devel-ubuntu16.04
+9.0-cudnn7-runtime-ubuntu16.04
+9.0-cudnn7-devel-ubuntu16.04
+
+CUDA 8.0
+8.0-runtime-ubuntu16.04
+8.0-devel-ubuntu16.04
+8.0-cudnn7-runtime-ubuntu16.04
+8.0-cudnn7-devel-ubuntu16.04
+8.0-cudnn6-runtime-ubuntu16.04
+8.0-cudnn6-devel-ubuntu16.04
+8.0-cudnn5-runtime-ubuntu16.04
+8.0-cudnn5-devel-ubuntu16.04
+
+- Ubuntu 14.04 
+
+CUDA 8.0
+8.0-runtime-ubuntu14.04
+8.0-devel-ubuntu14.04
+8.0-cudnn7-runtime-ubuntu14.04
+8.0-cudnn7-devel-ubuntu14.04
+8.0-cudnn6-runtime-ubuntu14.04
+8.0-cudnn6-devel-ubuntu14.04
+8.0-cudnn5-runtime-ubuntu14.04
+8.0-cudnn5-devel-ubuntu14.04
+
+CUDA 7.5
+7.5-runtime-ubuntu14.04
+7.5-devel-ubuntu14.04
+7.5-cudnn5-runtime-ubuntu14.04
+7.5-cudnn5-devel-ubuntu14.04
+7.5-cudnn4-runtime-ubuntu14.04
+7.5-cudnn4-devel-ubuntu14.04
+7.5-cudnn3-runtime-ubuntu14.04
+7.5-cudnn3-devel-ubuntu14.04
+
+CUDA 7.0
+7.0-runtime-ubuntu14.04
+7.0-devel-ubuntu14.04
+7.0-cudnn4-runtime-ubuntu14.04
+7.0-cudnn4-devel-ubuntu14.04
+7.0-cudnn3-runtime-ubuntu14.04
+7.0-cudnn3-devel-ubuntu14.04
+7.0-cudnn2-runtime-ubuntu14.04
+7.0-cudnn2-devel-ubuntu14.04
+
+CUDA 6.5
+6.5-runtime-ubuntu14.04
+6.5-devel-ubuntu14.04
+
