@@ -1,4 +1,4 @@
-9.0-cudnn7-devel-ubuntu16.04
+cuda9.0-cudnn7-devel-ubuntu16.04
 /usr/local/cuda-9.0
 ---
 Except line1 and line2, all text in this file is ignored, and thereby 
